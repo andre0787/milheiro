@@ -38,5 +38,5 @@ const columns: ColumnDef<Program>[] = [
 ]
 
 export function ProgramsTable({ data }: { data: Program[] }) {
-  return <DataTable columns={columns} data={data} />
+  return <DataTable columns={columns} data={data} searchable />
 }

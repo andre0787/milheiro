@@ -24,5 +24,5 @@ const columns: ColumnDef<Cpf>[] = [
 ]
 
 export function ClientesTable({ data }: { data: Cpf[] }) {
-  return <DataTable columns={columns} data={data} />
+  return <DataTable columns={columns} data={data} searchable />
 }

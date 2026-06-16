@@ -29,5 +29,5 @@ const columns: ColumnDef<Transfer>[] = [
 ]
 
 export function TransfersTable({ data }: { data: Transfer[] }) {
-  return <DataTable columns={columns} data={data} />
+  return <DataTable columns={columns} data={data} searchable />
 }

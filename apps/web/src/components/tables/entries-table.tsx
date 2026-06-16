@@ -27,5 +27,5 @@ const columns: ColumnDef<Entry>[] = [
 ]
 
 export function EntriesTable({ data }: { data: Entry[] }) {
-  return <DataTable columns={columns} data={data} />
+  return <DataTable columns={columns} data={data} searchable />
 }

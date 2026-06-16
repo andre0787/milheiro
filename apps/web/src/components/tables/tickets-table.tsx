@@ -35,5 +35,5 @@ const columns: ColumnDef<Ticket>[] = [
 ]
 
 export function TicketsTable({ data }: { data: Ticket[] }) {
-  return <DataTable columns={columns} data={data} />
+  return <DataTable columns={columns} data={data} searchable />
 }

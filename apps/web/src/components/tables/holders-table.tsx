@@ -23,5 +23,5 @@ const columns: ColumnDef<Holder>[] = [
 ]
 
 export function HoldersTable({ data }: { data: Holder[] }) {
-  return <DataTable columns={columns} data={data} />
+  return <DataTable columns={columns} data={data} searchable />
 }

@@ -34,5 +34,5 @@ const columns: ColumnDef<OperationType>[] = [
 ]
 
 export function OpTypesTable({ data }: { data: OperationType[] }) {
-  return <DataTable columns={columns} data={data} />
+  return <DataTable columns={columns} data={data} searchable />
 }
