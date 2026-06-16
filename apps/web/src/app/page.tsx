@@ -19,6 +19,7 @@ export default async function DashboardPage() {
 
   // CPM por programa e titular (estoque atual)
   interface HolderCpm {
+    key: string
     name: string
     program: string
     ptsTotal: number; ptsCost: number; ptsCpm: number
@@ -33,6 +34,7 @@ export default async function DashboardPage() {
     const key = `${b.holder_id}::${b.program_id}`
     if (!holderCpmMap.has(key)) {
       holderCpmMap.set(key, {
+        key,
         name: holderName, program: progName,
         ptsTotal: 0, ptsCost: 0, ptsCpm: 0,
         milhasTotal: 0, milhasCost: 0, milhasCpm: 0,
@@ -161,7 +163,7 @@ export default async function DashboardPage() {
           <h2 className="text-lg font-semibold mb-4">CPM por Titular e Programa (Estoque Atual)</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {holdersCpm.map((h) => (
-              <Card key={`${h.name}::${h.program}`}>
+              <Card key={h.key}>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">{h.name}</CardTitle>
                   <p className="text-xs text-muted-foreground">{h.program}</p>
