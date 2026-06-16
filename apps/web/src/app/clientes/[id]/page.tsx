@@ -3,16 +3,16 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { CpfForm } from '@/components/forms/cpf-form'
+import { ClienteForm } from '@/components/forms/cliente-form'
 
-export default function EditCpfPage() {
+export default function EditClientePage() {
   const router = useRouter()
   const params = useParams()
   const [initialData, setInitialData] = useState<Record<string, unknown> | undefined>(undefined)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/cpfs/${params.id}`)
+    fetch(`/api/clientes/${params.id}`)
       .then(r => r.json())
       .then(d => {
         if (d.data) setInitialData(d.data)
@@ -21,7 +21,7 @@ export default function EditCpfPage() {
   }, [params.id])
 
   async function handleSubmit(data: Record<string, unknown>) {
-    const res = await fetch(`/api/cpfs/${params.id}`, {
+    const res = await fetch(`/api/clientes/${params.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -30,18 +30,18 @@ export default function EditCpfPage() {
     if (json.error) {
       toast.error(json.error)
     } else {
-      toast.success('CPF atualizado!')
-      router.push('/cpfs')
+      toast.success('Cliente atualizado!')
+      router.push('/clientes')
       router.refresh()
     }
   }
 
-  if (loading) return <div>Carregando...</div>
+  if (loading) return <div className="text-sm text-muted-foreground p-6">Carregando...</div>
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Editar CPF</h1>
-      <CpfForm initialData={initialData} onSubmit={handleSubmit} />
+      <h1 className="text-3xl font-bold">Editar Cliente</h1>
+      <ClienteForm initialData={initialData} onSubmit={handleSubmit} />
     </div>
   )
 }

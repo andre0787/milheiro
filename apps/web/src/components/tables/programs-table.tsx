@@ -5,6 +5,7 @@ import { DataTable } from '@/components/data-table/data-table'
 import { ColumnDef } from '@tanstack/react-table'
 import { Program } from '@/types'
 import { formatCategory } from '@/lib/utils'
+import { DeleteButton } from '@/components/delete-button'
 
 const columns: ColumnDef<Program>[] = [
   { accessorKey: 'name', header: 'Nome' },
@@ -26,9 +27,12 @@ const columns: ColumnDef<Program>[] = [
   {
     id: 'actions',
     cell: ({ row }) => (
-      <Link href={`/programs/${row.original.id}`} className="text-sm text-blue-600 hover:underline">
-        Editar
-      </Link>
+      <div className="flex items-center gap-2">
+        <Link href={`/programs/${row.original.id}`} className="text-sm text-primary hover:underline">
+          Editar
+        </Link>
+        <DeleteButton apiEndpoint={`/api/programs/${row.original.id}`} />
+      </div>
     ),
   },
 ]

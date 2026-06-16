@@ -46,6 +46,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
+
+  const { count: tickets } = await supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('sale_id', id)
+  if ((tickets ?? 0) > 0) {
+    return NextResponse.json({
+      data: null,
+      error: `Não é possível excluir: ${tickets} bilhete(s) vinculado(s). Exclua os bilhetes primeiro.`
+    }, { status: 400 })
+  }
+
   const { error } = await supabase.from('sales').delete().eq('id', id)
   if (error) return NextResponse.json({ data: null, error: error.message }, { status: 400 })
   return NextResponse.json({ data: true, error: null })

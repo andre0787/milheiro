@@ -45,7 +45,7 @@ export function SaleForm({ initialData, onSubmit }: SaleFormProps) {
   useEffect(() => {
     fetch('/api/programs').then(r => r.json()).then(d => setPrograms(d.data ?? []))
     fetch('/api/holders').then(r => r.json()).then(d => setHolders(d.data ?? []))
-    fetch('/api/cpfs').then(r => r.json()).then(d => setCpfs(d.data ?? []))
+    fetch('/api/clientes').then(r => r.json()).then(d => setCpfs(d.data ?? []))
   }, [])
 
   useEffect(() => {

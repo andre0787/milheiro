@@ -31,15 +31,15 @@ interface InlineCreateDialogProps {
 const apiMap: Record<CreateType, string> = {
   program: "/api/programs",
   holder: "/api/holders",
-  cpf: "/api/cpfs",
-  buyer: "/api/cpfs",
+  cpf: "/api/clientes",
+  buyer: "/api/clientes",
   optype: "/api/operation-types",
 }
 
 const titleMap: Record<CreateType, string> = {
   program: "Novo Programa",
   holder: "Novo Titular",
-  cpf: "Novo CPF",
+  cpf: "Novo Cliente",
   buyer: "Novo Comprador",
   optype: "Novo Tipo de Operação",
 }

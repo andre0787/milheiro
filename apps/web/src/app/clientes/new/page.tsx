@@ -2,13 +2,13 @@
 
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { CpfForm } from '@/components/forms/cpf-form'
+import { ClienteForm } from '@/components/forms/cliente-form'
 
-export default function NewCpfPage() {
+export default function NewClientePage() {
   const router = useRouter()
 
   async function handleSubmit(data: Record<string, unknown>) {
-    const res = await fetch('/api/cpfs', {
+    const res = await fetch('/api/clientes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -17,16 +17,16 @@ export default function NewCpfPage() {
     if (json.error) {
       toast.error(json.error)
     } else {
-      toast.success('CPF cadastrado!')
-      router.push('/cpfs')
+      toast.success('Cliente cadastrado!')
+      router.push('/clientes')
       router.refresh()
     }
   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Novo CPF</h1>
-      <CpfForm onSubmit={handleSubmit} />
+      <h1 className="text-3xl font-bold">Novo Cliente</h1>
+      <ClienteForm onSubmit={handleSubmit} />
     </div>
   )
 }

@@ -8,7 +8,7 @@ const links = [
   { href: '/sales', label: 'Vendas', icon: '💰' },
   { href: '/holders', label: 'Titulares', icon: '👤' },
   { href: '/programs', label: 'Programas', icon: '🏪' },
-  { href: '/cpfs', label: 'CPFs', icon: '🪪' },
+  { href: '/clientes', label: 'Clientes', icon: '🪪' },
   { href: '/operation-types', label: 'Tipos de Operação', icon: '🏷️' },
 ]
 
