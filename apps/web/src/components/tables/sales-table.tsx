@@ -70,5 +70,5 @@ const columns: ColumnDef<Sale>[] = [
 ]
 
 export function SalesTable({ data }: { data: Sale[] }) {
-  return <DataTable columns={columns} data={data} />
+  return <DataTable columns={columns} data={data} searchable />
 }

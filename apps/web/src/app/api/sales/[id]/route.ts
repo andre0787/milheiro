@@ -47,11 +47,17 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   const { id } = await params
   const supabase = await createClient()
 
-  const { count: tickets } = await supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('sale_id', id)
-  if ((tickets ?? 0) > 0) {
+  const { data: tickets } = await supabase
+    .from('tickets').select('id, ticket_info').eq('sale_id', id).limit(5)
+  const names = (tickets ?? []).map(t => {
+    const tk = t as unknown as { ticket_info: string | null }
+    return `bilhete "${tk.ticket_info || '(sem código)'}"`
+  })
+
+  if (names.length > 0) {
     return NextResponse.json({
       data: null,
-      error: `Não é possível excluir: ${tickets} bilhete(s) vinculado(s). Exclua os bilhetes primeiro.`
+      error: `Não é possível excluir: ${names.join(', ')}. Exclua os bilhetes primeiro.`
     }, { status: 400 })
   }
 

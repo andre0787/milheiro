@@ -21,12 +21,23 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
-  const { error } = await supabase.from('operation_types').delete().eq('id', id)
-  if (error) {
-    const msg = error.message.includes('foreign key')
-      ? 'Este tipo de operação está em uso por entradas. Remova as entradas vinculadas primeiro.'
-      : error.message
-    return NextResponse.json({ data: null, error: msg }, { status: 400 })
+
+  const { count, data: entries } = await supabase
+    .from('entries').select('date, points', { count: 'exact' }).eq('operation_type_id', id).limit(5)
+
+  if (count && count > 0) {
+    const samples = (entries ?? []).slice(0, 3).map(e => {
+      const en = e as unknown as { date: string; points: number }
+      return `entrada ${en.date} (${en.points} pts)`
+    })
+    const extra = count > 3 ? ` +${count - 3} mais` : ''
+    return NextResponse.json({
+      data: null,
+      error: `Não é possível excluir: ${samples.join(', ')}${extra}. Remova as entradas vinculadas primeiro.`
+    }, { status: 400 })
   }
+
+  const { error } = await supabase.from('operation_types').delete().eq('id', id)
+  if (error) return NextResponse.json({ data: null, error: error.message }, { status: 400 })
   return NextResponse.json({ data: true, error: null })
 }

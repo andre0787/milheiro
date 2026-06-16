@@ -22,22 +22,32 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   const { id } = await params
   const supabase = await createClient()
 
+  const names: string[] = []
+
   const { count: entries } = await supabase.from('entries').select('*', { count: 'exact', head: true }).eq('holder_id', id)
+  if (entries) names.push(`${entries} entrada(s)`)
+
   const { count: transfers } = await supabase.from('transfers').select('*', { count: 'exact', head: true }).eq('holder_id', id)
-  const { count: sales } = await supabase.from('sales').select('*', { count: 'exact', head: true }).eq('holder_id', id)
-  const { count: tickets } = await supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('holder_id', id)
+  if (transfers) names.push(`${transfers} transferência(s)`)
 
-  const deps = [
-    { count: entries ?? 0, label: 'entradas' },
-    { count: transfers ?? 0, label: 'transferências' },
-    { count: sales ?? 0, label: 'vendas' },
-    { count: tickets ?? 0, label: 'bilhetes' },
-  ].filter(d => d.count > 0)
+  const { data: sales } = await supabase
+    .from('sales').select('id, programs:program_id(name)').eq('holder_id', id).limit(3)
+  for (const s of (sales ?? [])) {
+    const sl = s as unknown as { programs: { name: string } }
+    names.push(`venda "${sl.programs?.name}"`)
+  }
 
-  if (deps.length > 0) {
+  const { data: tickets } = await supabase
+    .from('tickets').select('id, ticket_info').eq('holder_id', id).limit(3)
+  for (const t of (tickets ?? [])) {
+    const tk = t as unknown as { ticket_info: string | null }
+    names.push(`bilhete "${tk.ticket_info || '(sem código)'}"`)
+  }
+
+  if (names.length > 0) {
     return NextResponse.json({
       data: null,
-      error: `Não é possível excluir: ${deps.map(d => `${d.count} ${d.label}`).join(', ')}`
+      error: `Não é possível excluir: ${names.join(', ')}`
     }, { status: 400 })
   }
 

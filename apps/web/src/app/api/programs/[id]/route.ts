@@ -22,25 +22,37 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   const { id } = await params
   const supabase = await createClient()
 
+  const names: string[] = []
+
   const { count: entries } = await supabase.from('entries').select('*', { count: 'exact', head: true }).eq('program_id', id)
-  const { count: transfersFrom } = await supabase.from('transfers').select('*', { count: 'exact', head: true }).eq('from_program_id', id)
-  const { count: transfersTo } = await supabase.from('transfers').select('*', { count: 'exact', head: true }).eq('to_program_id', id)
-  const { count: sales } = await supabase.from('sales').select('*', { count: 'exact', head: true }).eq('program_id', id)
-  const { count: tickets } = await supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('program_id', id)
+  if (entries) names.push(`${entries} entrada(s)`)
+
+  const { count: tFrom } = await supabase.from('transfers').select('*', { count: 'exact', head: true }).eq('from_program_id', id)
+  const { count: tTo } = await supabase.from('transfers').select('*', { count: 'exact', head: true }).eq('to_program_id', id)
+  const totalTransfers = (tFrom ?? 0) + (tTo ?? 0)
+  if (totalTransfers > 0) names.push(`${totalTransfers} transferência(s)`)
+
+  const { data: sales } = await supabase
+    .from('sales').select('id, programs:program_id(name)').eq('program_id', id).limit(3)
+  for (const s of (sales ?? [])) {
+    const sl = s as unknown as { programs: { name: string } }
+    names.push(`venda "${sl.programs?.name}"`)
+  }
+
+  const { data: tickets } = await supabase
+    .from('tickets').select('id, ticket_info').eq('program_id', id).limit(3)
+  for (const t of (tickets ?? [])) {
+    const tk = t as unknown as { ticket_info: string | null }
+    names.push(`bilhete "${tk.ticket_info || '(sem código)'}"`)
+  }
+
   const { count: balances } = await supabase.from('balances').select('*', { count: 'exact', head: true }).eq('program_id', id)
+  if (balances) names.push(`${balances} saldo(s)`)
 
-  const deps = [
-    { count: entries ?? 0, label: 'entradas' },
-    { count: (transfersFrom ?? 0) + (transfersTo ?? 0), label: 'transferências' },
-    { count: sales ?? 0, label: 'vendas' },
-    { count: tickets ?? 0, label: 'bilhetes' },
-    { count: balances ?? 0, label: 'saldos' },
-  ].filter(d => d.count > 0)
-
-  if (deps.length > 0) {
+  if (names.length > 0) {
     return NextResponse.json({
       data: null,
-      error: `Não é possível excluir: ${deps.map(d => `${d.count} ${d.label}`).join(', ')}`
+      error: `Não é possível excluir: ${names.join(', ')}`
     }, { status: 400 })
   }
 
