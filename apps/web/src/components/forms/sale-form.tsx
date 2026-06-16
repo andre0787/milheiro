@@ -28,8 +28,9 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
   const [pointsSold, setPointsSold] = useState(0)
   const [saleValue, setSaleValue] = useState(0)
   const [currentCpm, setCurrentCpm] = useState(0)
-  const [autoProfit, setAutoProfit] = useState<number | null>(null)
   const [overrideProfit, setOverrideProfit] = useState('')
+
+  const autoProfit = pointsSold > 0 && currentCpm > 0 ? saleValue - (pointsSold * currentCpm) / 1000 : null
 
   useEffect(() => {
     fetch('/api/programs').then(r => r.json()).then(d => setPrograms(d.data ?? []))
@@ -47,15 +48,6 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
         })
     }
   }, [selectedProgramId, selectedHolderId])
-
-  useEffect(() => {
-    if (pointsSold > 0 && currentCpm > 0) {
-      const cost = (pointsSold * currentCpm) / 1000
-      setAutoProfit(saleValue - cost)
-    } else {
-      setAutoProfit(null)
-    }
-  }, [pointsSold, saleValue, currentCpm])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
