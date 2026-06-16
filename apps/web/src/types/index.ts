@@ -10,6 +10,7 @@ export interface Program {
   tenant_id: string
   name: string
   slug: string
+  category: 'points' | 'miles'
   emission_limit: number
   limit_window_type: 'rolling' | 'fixed' | 'none'
   limit_window_days: number

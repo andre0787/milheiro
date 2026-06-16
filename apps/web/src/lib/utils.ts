@@ -28,3 +28,7 @@ export function formatDate(date: string | null): string {
 export function formatDateTime(date: string): string {
   return new Date(date).toLocaleString('pt-BR')
 }
+
+export function formatCategory(category: string): string {
+  return category === 'points' ? 'Pontos' : 'Milhas'
+}
