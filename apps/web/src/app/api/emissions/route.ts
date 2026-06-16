@@ -22,6 +22,12 @@ export async function POST(request: Request) {
     .single()
 
   if (!program) return NextResponse.json({ data: null, error: 'Program not found' }, { status: 404 })
+  if (program.category !== 'miles') {
+    return NextResponse.json(
+      { data: null, error: 'INVALID_EMISSION_PROGRAM_CATEGORY: Emissões só podem ser registradas em programas de milhas' },
+      { status: 422 }
+    )
+  }
 
   if (program.limit_window_type !== 'none') {
     let countQuery = supabase

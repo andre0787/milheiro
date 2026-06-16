@@ -13,6 +13,12 @@ export async function GET(request: NextRequest) {
 
   const { data: program } = await supabase.from('programs').select('*').eq('id', programId).single()
   if (!program) return NextResponse.json({ data: null, error: 'Program not found' }, { status: 404 })
+  if (program.category !== 'miles') {
+    return NextResponse.json(
+      { data: null, error: 'INVALID_EMISSION_PROGRAM_CATEGORY: Program is not a miles program' },
+      { status: 422 }
+    )
+  }
 
   let count = 0
   let cooldownRemaining: number | null = null
