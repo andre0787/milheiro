@@ -60,7 +60,7 @@ export function TransferForm({ onSubmit }: TransferFormProps) {
             <Select name="from_program_id" required>
               <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
-                {programs.map((p) => (
+                {programs.filter(p => p.category === 'points').map((p) => (
                   <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                 ))}
               </SelectContent>
@@ -71,7 +71,7 @@ export function TransferForm({ onSubmit }: TransferFormProps) {
             <Select name="to_program_id" required>
               <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
-                {programs.map((p) => (
+                {programs.filter(p => p.category === 'miles').map((p) => (
                   <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                 ))}
               </SelectContent>

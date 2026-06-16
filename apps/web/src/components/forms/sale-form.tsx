@@ -77,7 +77,7 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
             <Select name="program_id" required onValueChange={(v) => setSelectedProgramId(v as string)}>
               <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
-                {programs.map((p) => (
+                {programs.filter(p => p.category === 'miles').map((p) => (
                   <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                 ))}
               </SelectContent>
