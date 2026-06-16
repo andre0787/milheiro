@@ -18,7 +18,7 @@ INSERT INTO tenants (id, name, slug) VALUES (gen_random_uuid(), 'Meu Uso Pessoal
 -- Programs (loyalty programs, configurable)
 CREATE TABLE programs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT gen_random_uuid() REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
   name TEXT NOT NULL,
   slug TEXT NOT NULL,
   emission_limit INT DEFAULT 0,
@@ -33,7 +33,7 @@ CREATE TABLE programs (
 -- Holders (account holders)
 CREATE TABLE holders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT gen_random_uuid() REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
   name TEXT NOT NULL,
   nickname TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -42,7 +42,7 @@ CREATE TABLE holders (
 -- Operation types (categories for entries)
 CREATE TABLE operation_types (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT gen_random_uuid() REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
   name TEXT NOT NULL,
   slug TEXT NOT NULL,
   is_purchase BOOLEAN DEFAULT TRUE,
@@ -50,17 +50,21 @@ CREATE TABLE operation_types (
 );
 
 -- Insert default operation types
-INSERT INTO operation_types (name, slug, is_purchase) VALUES
-  ('Clube de Assinatura', 'clube', TRUE),
-  ('Compra com Desconto', 'compra-desconto', TRUE),
-  ('Transferência de Carrinho', 'transf-carrinho', FALSE),
-  ('Bônus Promocional', 'bonus', FALSE),
-  ('Compra de Pontos', 'compra-pontos', TRUE);
+INSERT INTO operation_types (tenant_id, name, slug, is_purchase)
+SELECT id, 'Clube de Assinatura', 'clube', TRUE FROM tenants WHERE slug = 'me'
+UNION ALL
+SELECT id, 'Compra com Desconto', 'compra-desconto', TRUE FROM tenants WHERE slug = 'me'
+UNION ALL
+SELECT id, 'Transferência de Carrinho', 'transf-carrinho', FALSE FROM tenants WHERE slug = 'me'
+UNION ALL
+SELECT id, 'Bônus Promocional', 'bonus', FALSE FROM tenants WHERE slug = 'me'
+UNION ALL
+SELECT id, 'Compra de Pontos', 'compra-pontos', TRUE FROM tenants WHERE slug = 'me';
 
 -- Entries (purchases/accumulations)
 CREATE TABLE entries (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT gen_random_uuid() REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
   program_id UUID NOT NULL REFERENCES programs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
   operation_type_id UUID REFERENCES operation_types(id),
@@ -74,7 +78,7 @@ CREATE TABLE entries (
 -- Transfers (between programs)
 CREATE TABLE transfers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT gen_random_uuid() REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
   from_program_id UUID NOT NULL REFERENCES programs(id),
   to_program_id UUID NOT NULL REFERENCES programs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
@@ -90,7 +94,7 @@ CREATE TABLE transfers (
 -- Sales
 CREATE TABLE sales (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT gen_random_uuid() REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
   program_id UUID NOT NULL REFERENCES programs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
   date DATE NOT NULL,
@@ -109,7 +113,7 @@ CREATE TABLE sales (
 -- CPFs
 CREATE TABLE cpfs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT gen_random_uuid() REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
   name TEXT NOT NULL,
   document TEXT UNIQUE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -118,7 +122,7 @@ CREATE TABLE cpfs (
 -- Emissions (ticket issuances)
 CREATE TABLE emissions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT gen_random_uuid() REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
   program_id UUID NOT NULL REFERENCES programs(id),
   cpf_id UUID NOT NULL REFERENCES cpfs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
@@ -130,7 +134,7 @@ CREATE TABLE emissions (
 -- Balances (materialized via triggers)
 CREATE TABLE balances (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT gen_random_uuid() REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
   program_id UUID NOT NULL REFERENCES programs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
   total_points INT NOT NULL DEFAULT 0 CHECK (total_points >= 0),
@@ -322,8 +326,6 @@ DECLARE
   from_balance RECORD;
   to_balance RECORD;
   cost_per_point_at_transfer DECIMAL(12,6);
-  original_points_from_origin INT;
-  original_cost_from_origin DECIMAL(12,2);
   transfer_cost DECIMAL(12,2);
 BEGIN
   -- Revert destination: remove the points_received and the cost that was added
