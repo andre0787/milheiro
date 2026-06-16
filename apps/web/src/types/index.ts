@@ -74,19 +74,24 @@ export interface Sale {
   tenant_id: string
   program_id: string
   holder_id: string
+  buyer_id: string | null
+  ticket_id: string | null
   date: string
   points_sold: number
   sale_value: number
-  buyer: string | null
   expected_receipt_date: string | null
   profit_auto: number | null
   profit_override: number | null
   profit_final: number | null
+  received: boolean | null
   cpm_at_sale: number | null
   notes: string | null
   created_at: string
   program_name?: string
   holder_name?: string
+  buyer_name?: string
+  ticket_code?: string | null
+  cpf_names?: string[]
 }
 
 export interface Cpf {
@@ -94,22 +99,25 @@ export interface Cpf {
   tenant_id: string
   name: string
   document: string
+  telegram: string | null
   created_at: string
 }
 
-export interface Emission {
+export interface Ticket {
   id: string
   tenant_id: string
   program_id: string
-  cpf_id: string
   holder_id: string
+  sale_id: string
   issued_at: string
+  outbound_date: string | null
+  return_date: string | null
   ticket_info: string | null
   created_at: string
   program_name?: string
-  cpf_name?: string
-  cpf_document?: string
+  cpf_names?: string[]
   holder_name?: string
+  sale_name?: string
 }
 
 export interface Balance {
@@ -142,7 +150,7 @@ export interface ApiResponse<T> {
   error: string | null
 }
 
-export interface EmissionCheck {
+export interface TicketCheck {
   available: boolean
   used: number
   limit: number

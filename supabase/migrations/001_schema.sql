@@ -13,12 +13,12 @@ CREATE TABLE tenants (
 );
 
 -- Insert default tenant for MVP
-INSERT INTO tenants (id, name, slug) VALUES (gen_random_uuid(), 'Meu Uso Pessoal', 'me');
+INSERT INTO tenants (id, name, slug) VALUES ('00000000-0000-0000-0000-000000000001', 'Meu Uso Pessoal', 'me');
 
 -- Programs (loyalty programs, configurable)
 CREATE TABLE programs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001' REFERENCES tenants(id),
   name TEXT NOT NULL,
   slug TEXT NOT NULL,
   emission_limit INT DEFAULT 0,
@@ -33,7 +33,7 @@ CREATE TABLE programs (
 -- Holders (account holders)
 CREATE TABLE holders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001' REFERENCES tenants(id),
   name TEXT NOT NULL,
   nickname TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -42,7 +42,7 @@ CREATE TABLE holders (
 -- Operation types (categories for entries)
 CREATE TABLE operation_types (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001' REFERENCES tenants(id),
   name TEXT NOT NULL,
   slug TEXT NOT NULL,
   is_purchase BOOLEAN DEFAULT TRUE,
@@ -64,7 +64,7 @@ SELECT id, 'Compra de Pontos', 'compra-pontos', TRUE FROM tenants WHERE slug = '
 -- Entries (purchases/accumulations)
 CREATE TABLE entries (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001' REFERENCES tenants(id),
   program_id UUID NOT NULL REFERENCES programs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
   operation_type_id UUID REFERENCES operation_types(id),
@@ -78,7 +78,7 @@ CREATE TABLE entries (
 -- Transfers (between programs)
 CREATE TABLE transfers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001' REFERENCES tenants(id),
   from_program_id UUID NOT NULL REFERENCES programs(id),
   to_program_id UUID NOT NULL REFERENCES programs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
@@ -94,7 +94,7 @@ CREATE TABLE transfers (
 -- Sales
 CREATE TABLE sales (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001' REFERENCES tenants(id),
   program_id UUID NOT NULL REFERENCES programs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
   date DATE NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE sales (
 -- CPFs
 CREATE TABLE cpfs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001' REFERENCES tenants(id),
   name TEXT NOT NULL,
   document TEXT UNIQUE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -122,7 +122,7 @@ CREATE TABLE cpfs (
 -- Emissions (ticket issuances)
 CREATE TABLE emissions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001' REFERENCES tenants(id),
   program_id UUID NOT NULL REFERENCES programs(id),
   cpf_id UUID NOT NULL REFERENCES cpfs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
@@ -134,7 +134,7 @@ CREATE TABLE emissions (
 -- Balances (materialized via triggers)
 CREATE TABLE balances (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL DEFAULT (SELECT id FROM tenants LIMIT 1) REFERENCES tenants(id),
+  tenant_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001' REFERENCES tenants(id),
   program_id UUID NOT NULL REFERENCES programs(id),
   holder_id UUID NOT NULL REFERENCES holders(id),
   total_points INT NOT NULL DEFAULT 0 CHECK (total_points >= 0),

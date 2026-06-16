@@ -1,18 +1,9 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
-import { DataTable } from '@/components/data-table/data-table'
-import { ColumnDef } from '@tanstack/react-table'
+import { EntriesTable } from '@/components/tables/entries-table'
+import { ClearAllButton } from '@/components/clear-all-button'
 import { Entry } from '@/types'
-import { formatCurrency, formatDate, formatNumber } from '@/lib/utils'
-
-const columns: ColumnDef<Entry>[] = [
-  { accessorKey: 'date', header: 'Data', cell: ({ row }) => formatDate(row.original.date) },
-  { accessorKey: 'program_name', header: 'Programa' },
-  { accessorKey: 'holder_name', header: 'Titular' },
-  { accessorKey: 'points', header: 'Pontos', cell: ({ row }) => formatNumber(row.original.points) },
-  { accessorKey: 'cost', header: 'Valor', cell: ({ row }) => formatCurrency(row.original.cost) },
-]
 
 export default async function EntriesPage() {
   const supabase = await createClient()
@@ -21,19 +12,22 @@ export default async function EntriesPage() {
     .select('*, programs:program_id(name), holders:holder_id(name)')
     .order('date', { ascending: false })
 
-  const mapped = (entries ?? []).map((e) => ({
+  const mapped: Entry[] = (entries ?? []).map((e: Record<string, unknown>) => ({
     ...e,
     program_name: (e.programs as { name: string } | null)?.name ?? '-',
     holder_name: (e.holders as { name: string } | null)?.name ?? '-',
-  }))
+  } as Entry))
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Entradas</h1>
-        <Button render={<Link href="/entries/new" />}>Nova Entrada</Button>
+        <div className="flex gap-2">
+          <Button render={<Link href="/entries/new" />}>Nova Entrada</Button>
+          <ClearAllButton listApi="/api/entries" deleteApiBase="/api/entries" />
+        </div>
       </div>
-      <DataTable columns={columns} data={mapped} />
+      <EntriesTable data={mapped} />
     </div>
   )
 }

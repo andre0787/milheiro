@@ -1,14 +1,15 @@
 import Link from 'next/link'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const links = [
   { href: '/', label: 'Dashboard', icon: '📊' },
   { href: '/entries', label: 'Entradas', icon: '📥' },
   { href: '/transfers', label: 'Transferências', icon: '🔄' },
   { href: '/sales', label: 'Vendas', icon: '💰' },
-  { href: '/emissions', label: 'Emissões', icon: '🎫' },
   { href: '/holders', label: 'Titulares', icon: '👤' },
   { href: '/programs', label: 'Programas', icon: '🏪' },
   { href: '/cpfs', label: 'CPFs', icon: '🪪' },
+  { href: '/operation-types', label: 'Tipos de Operação', icon: '🏷️' },
 ]
 
 export function Sidebar() {
@@ -27,6 +28,9 @@ export function Sidebar() {
           </Link>
         ))}
       </nav>
+      <div className="mt-auto">
+        <ThemeToggle />
+      </div>
     </aside>
   )
 }

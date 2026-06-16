@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS emissions RENAME TO tickets;

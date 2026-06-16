@@ -7,20 +7,40 @@ import { SaleForm } from '@/components/forms/sale-form'
 export default function NewSalePage() {
   const router = useRouter()
 
-  async function handleSubmit(data: Record<string, unknown>) {
-    const res = await fetch('/api/sales', {
+  async function handleSubmit(saleData: Record<string, unknown>, ticketData: Record<string, unknown>, ticketCpfs: string[]) {
+    const saleRes = await fetch('/api/sales', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(saleData),
     })
-    const json = await res.json()
-    if (json.error) {
-      toast.error(json.error)
-    } else {
-      toast.success('Venda registrada!')
-      router.push('/sales')
-      router.refresh()
+    const saleJson = await saleRes.json()
+    if (saleJson.error) {
+      toast.error(saleJson.error)
+      return
     }
+
+    const sale = saleJson.data
+    const ticketRes = await fetch('/api/tickets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...ticketData, sale_id: sale.id, cpf_ids: ticketCpfs }),
+    })
+    const ticketJson = await ticketRes.json()
+    if (ticketJson.error) {
+      toast.error('Venda criada, mas erro no bilhete: ' + ticketJson.error)
+    }
+
+    await fetch(`/api/sales/${sale.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket_id: ticketJson.data?.id }),
+    })
+
+    if (!ticketJson.error) {
+      toast.success('Venda e bilhete registrados!')
+    }
+    router.push('/sales')
+    router.refresh()
   }
 
   return (
