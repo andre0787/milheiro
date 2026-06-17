@@ -22,6 +22,14 @@ master ────── produção
 7. Push develop → novo preview
 8. Quando pronto: merge na master → **produção**
 
+## Post-Deploy Routine (ALWAYS)
+1. Update `CHANGELOG.md` with new version entry
+2. Update Obsidian docs (`docs/obsidian/`) if new features added
+3. Update `apps/web/AGENTS.md` if new patterns/conventions introduced
+4. Commit: `git add -A && git commit -m "chore: update memory files post-deploy vX.Y.Z"`
+5. Push to master
+6. Verify production URL returns 200
+
 ## Commit Convention
 ```
 feat: descrição

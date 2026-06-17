@@ -1,6 +1,8 @@
 ---
 tags: [milheiro, mvp, overview]
 created: 2026-06-16
+updated: 2026-06-17
+version: v0.1.0
 ---
 
 # Milheiro — Gerenciador de Pontos e Milhas
@@ -10,8 +12,10 @@ App pessoal para rastrear acúmulo de pontos/milhas, transferências e vendas co
 ## Stack
 - **Frontend**: Next.js 16.2.9 (App Router, Turbopack)
 - **CSS**: Tailwind CSS v4 + shadcn/ui v4 (Base UI primitives)
+- **Font**: Geist (Vercel)
 - **Database**: Supabase (PostgreSQL)
 - **Language**: TypeScript
+- **Theme**: Corporate light (warm off-white) / Business dark (glassmorphism)
 
 ## Estrutura
 ```

@@ -49,3 +49,14 @@ npx supabase db query "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SE
 - All 11 tables have RLS enabled
 - Policy: `allow_all` — USING (true) / WITH CHECK (true)
 - For MVP without login; will be tightened when auth is added
+
+## Deploy History
+
+| Date | Version | What |
+|------|---------|------|
+| 2026-06-17 | v0.1.0 | Geist font + glassmorphism + warm light theme + gradient headings |
+| 2026-06-16 | v0.0.4 | RLS migration + deploy spec |
+| 2026-06-16 | v0.0.3 | Search in all tabs |
+| 2026-06-16 | v0.0.2 | FK guards with real names |
+| 2026-06-16 | v0.0.1 | Clientes rename + FK guards |
+| 2026-06-16 | v0.0.0 | Initial MVP deploy |

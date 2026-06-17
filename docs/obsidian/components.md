@@ -52,8 +52,11 @@ tags: [components, ui, shadcn]
 | ReceivedToggle | `received-toggle.tsx` | Toggle received flag inline |
 | ThemeToggle | `theme-toggle.tsx` | Light/dark switch |
 | ThemeProvider | `theme-provider.tsx` | localStorage + system preference |
+| Heading | `heading.tsx` | Page title with gradient underline |
 
-## Theming
-- CSS variables `--color-*` defined in `:root`/`.dark` directly (not `@theme inline`)
-- `@theme` block with `initial` values for Tailwind utility registration
-- Semantic: `--color-profit` (green), `--color-loss` (red)
+## Theming (v0.1.0)
+- Font: **Geist** (Vercel) —`next/font/google`
+- Light: off-white bg, glass sidebar, shadow cards
+- Dark: glassmorphism sidebar + cards, orange accent
+- `Heading`: `<h1>` + `bg-gradient-to-r from-primary to-accent` underline
+- Glassmorphism: `backdrop-blur-xl` via `bg-sidebar`

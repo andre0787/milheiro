@@ -15,6 +15,19 @@ Personal web app to track points/miles accumulation, transfers, and sales with w
 - shadcn/ui v4 (Base UI primitives)
 - Supabase (PostgreSQL, local via `supabase start`)
 - TypeScript strict
+- Font: Geist (Vercel)
+- Theme: Corporate (light) / Business (dark) daisyUI base, customized
+
+## Current Version: v0.1.0
+
+See `CHANGELOG.md` for full version history.
+
+## Post-Deploy Checklist (ALWAYS after merge to master)
+1. Update `CHANGELOG.md` with new version entry
+2. Update Obsidian docs (`docs/obsidian/`) if new features added
+3. Update this AGENTS.md if new patterns/conventions introduced
+4. Commit memory updates to master
+5. Verify production URL returns 200
 
 ## Key Commands
 
@@ -148,15 +161,34 @@ FOR EACH ROW WHEN (
 - Creates entities inline without navigation, preserving form state
 - Auto-selects the new entity after creation
 
+### Theming (v0.1.0)
+- Font: **Geist** (from `next/font/google`) — clean geometric sans-serif
+- Light: warm off-white bg `oklch(98.5% 0.005 260)`, glass sidebar, shadow cards
+- Dark: dark blue-gray bg, glassmorphism sidebar/cards, orange accent
+- CSS variables `--color-*` defined in `:root`/`.dark` directly (not `@theme inline`)
+- `@theme` block with `initial` values for Tailwind utility registration
+- Semantic: `--color-profit` (green), `--color-loss` (red)
+- Glassmorphism: `backdrop-blur-xl` on sidebar via `bg-sidebar`
+- Card elevation: `shadow-sm ring-1 ring-foreground/5`
+- `Heading` component: `<h1>` with gradient underline `primary→accent`
+
 ### DataTable
 - Generic wrapper around `@tanstack/react-table`
+- `searchable` prop: global text filter across all columns
 - Pagination included
+- Applied to all 8 table components
 
-### Theming
-- CSS variables `--color-*` defined in `:root`/`.dark` directly (not `@theme inline`)
-- `@theme` block with `initial` values for Tailwind utilities
-- VS Code gray palette
-- Semantic colors: `--color-profit: #2ea043`, `--color-loss: #f85149`
+## Deploy
+
+| Environment | Branch | URL |
+|-------------|--------|-----|
+| Production | `master` | https://web-alpha-ashy-0yn7kj4k5v.vercel.app |
+| Preview | `develop` or any branch | `https://web-XXXXX-<branch>-andreluiz0787.vercel.app` |
+
+- Every push to any branch triggers auto-deploy via Vercel GitHub integration
+- Supabase Cloud: project `tcrxfeczxlohsdhkhgyq` (São Paulo)
+- Env vars set in Vercel for production, preview, and development environments
+- Post-deploy: always update CHANGELOG + Obsidian + AGENTS.md
 
 ## Working Directory & Permissions
 
