@@ -14,7 +14,7 @@ const links = [
 
 export function Sidebar() {
   return (
-    <aside className="w-60 border-r bg-muted/30 p-4 flex flex-col gap-1">
+    <aside className="w-60 border-r border-sidebar-border bg-sidebar backdrop-blur-xl p-4 flex flex-col gap-1">
       <div className="text-lg font-bold mb-6 px-2">Milheiro</div>
       <nav className="flex flex-col gap-1">
         {links.map((link) => (
