@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.2.0 — Login com Google (2026-06-16)
+- **Auth**: Google OAuth via Supabase Auth
+- **Middleware**: session refresh + redirect `/login` se nao autenticado
+- **`/login`**: botao "Entrar com Google", titulo "Gestao — Estoque de Pontos e Milhas"
+- **RLS**: politica `tenant_isolation` substitui `allow_all` — filtra por tenant do usuario
+- **Migration 011**: `user_tenants` + `get_tenant_id()` + novas politicas em 11 tabelas
+- **Sidebar**: avatar, nome do usuario, botao Sair
+- **AuthProvider**: React Context com user, session, signOut
+- **Admin client**: mantido para FK guards (bypass RLS)
+- **Primeiro login**: associa ao tenant `0000...0001` (dados preservados)
+
 ## v0.1.0 — Geist + Glassmorphism (2026-06-17)
 - **Fonte**: Geist (Vercel) substitui Inter
 - **Tema claro**: fundo off-white `oklch(98.5% 0.005 260)`, sidebar glass, cards com sombra

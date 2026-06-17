@@ -17,8 +17,9 @@ Personal web app to track points/miles accumulation, transfers, and sales with w
 - TypeScript strict
 - Font: Geist (Vercel)
 - Theme: Corporate (light) / Business (dark) daisyUI base, customized
+- Auth: Supabase Auth (Google OAuth), middleware session refresh
 
-## Current Version: v0.1.0
+## Current Version: v0.2.0
 
 See `CHANGELOG.md` for full version history.
 
