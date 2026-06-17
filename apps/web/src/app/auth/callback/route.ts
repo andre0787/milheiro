@@ -14,17 +14,16 @@ export async function GET(request: Request) {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const admin = createAdminClient()
-        const { data: existing } = await admin
+        const { error: upsertError } = await admin
           .from('user_tenants')
-          .select('user_id')
-          .eq('user_id', user.id)
-          .maybeSingle()
-
-        if (!existing) {
-          await admin.from('user_tenants').insert({
+          .upsert({
             user_id: user.id,
             tenant_id: '00000000-0000-0000-0000-000000000001',
           })
+
+        if (upsertError) {
+          console.error('Failed to upsert user_tenants mapping:', upsertError)
+          return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent('Failed to initialize your account. Please try again.')}`)
         }
       }
     }
