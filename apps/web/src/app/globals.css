@@ -46,7 +46,7 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(100% 0 0);
+  --background: oklch(98.5% 0.005 260);
   --foreground: oklch(22.389% 0.031 278.072);
   --card: oklch(100% 0 0);
   --card-foreground: oklch(22.389% 0.031 278.072);
@@ -62,21 +62,21 @@
   --accent-foreground: oklch(100% 0 0);
   --destructive: oklch(70% 0.191 22.216);
   --destructive-foreground: oklch(100% 0 0);
-  --border: oklch(90% 0 0);
-  --input: oklch(90% 0 0);
+  --border: oklch(92% 0 0);
+  --input: oklch(92% 0 0);
   --ring: oklch(58% 0.158 241.966);
   --chart-1: oklch(58% 0.158 241.966);
   --chart-2: oklch(60% 0.118 184.704);
   --chart-3: oklch(55% 0.046 257.417);
   --chart-4: oklch(85% 0.199 91.936);
   --chart-5: oklch(70% 0.191 22.216);
-  --sidebar: oklch(97% 0 0 / 0.8);
+  --sidebar: oklch(100% 0 0 / 0.8);
   --sidebar-foreground: oklch(22.389% 0.031 278.072);
   --sidebar-primary: oklch(58% 0.158 241.966);
   --sidebar-primary-foreground: oklch(100% 0 0);
-  --sidebar-accent: oklch(90% 0 0 / 0.6);
+  --sidebar-accent: oklch(92% 0 0 / 0.6);
   --sidebar-accent-foreground: oklch(22.389% 0.031 278.072);
-  --sidebar-border: oklch(93% 0 0);
+  --sidebar-border: oklch(94% 0 0 / 0.5);
   --sidebar-ring: oklch(58% 0.158 241.966);
   --profit: oklch(62% 0.194 149.214);
   --loss: oklch(70% 0.191 22.216);

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { DashboardSummary } from '@/types'
 import { PnLTable } from '@/components/dashboard/pnl-table'
+import { Heading } from '@/components/heading'
 
 export const dynamic = 'force-dynamic'
 
@@ -125,7 +126,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+      <Heading>Dashboard</Heading>
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
