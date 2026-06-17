@@ -27,14 +27,23 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
   const isPublicPath = pathname === '/login' || pathname.startsWith('/auth/callback')
 
-  if (!user && !isPublicPath) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user && !isPublicPath) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+  } catch {
+    if (!isPublicPath) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse
