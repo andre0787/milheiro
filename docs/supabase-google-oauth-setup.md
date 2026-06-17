@@ -8,9 +8,7 @@
 4. Application type: "Web application"
 5. Name: "Milheiro"
 6. Authorized redirect URIs:
-   - `http://localhost:3000/auth/callback` (local dev)
-   - `https://web-alpha-ashy-0yn7kj4k5v.vercel.app/auth/callback` (production)
-   - `https://web-*.vercel.app/auth/callback` (preview)
+   - `https://web-alpha-ashy-0yn7kj4k5v.vercel.app/auth/callback`
 7. Create and copy Client ID and Client Secret
 
 ## 2. Supabase Cloud Dashboard
