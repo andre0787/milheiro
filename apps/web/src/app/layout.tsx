@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import { Sidebar } from '@/components/sidebar'
+import { SidebarWrapper } from '@/components/sidebar-wrapper'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/components/auth-provider'
@@ -38,7 +38,7 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <div className="flex h-screen">
-              <Sidebar />
+              <SidebarWrapper />
               <main className="flex-1 overflow-auto p-6">
                 {children}
               </main>
