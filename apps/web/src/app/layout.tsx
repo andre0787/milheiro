@@ -4,6 +4,7 @@ import './globals.css'
 import { Sidebar } from '@/components/sidebar'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
+import { AuthProvider } from '@/components/auth-provider'
 
 const geist = Geist({ subsets: ['latin'] })
 
@@ -35,13 +36,15 @@ export default function RootLayout({
       </head>
       <body className={`${geist.className} bg-background text-foreground antialiased`}>
         <ThemeProvider>
-          <div className="flex h-screen">
-            <Sidebar />
-            <main className="flex-1 overflow-auto p-6">
-              {children}
-            </main>
-          </div>
-          <Toaster />
+          <AuthProvider>
+            <div className="flex h-screen">
+              <Sidebar />
+              <main className="flex-1 overflow-auto p-6">
+                {children}
+              </main>
+            </div>
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
