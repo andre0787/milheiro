@@ -9,6 +9,8 @@ CREATE TABLE user_tenants (
 
 COMMENT ON TABLE user_tenants IS 'Maps Supabase Auth user_id to tenant_id. First Google login associates with default tenant.';
 
+CREATE INDEX idx_user_tenants_tenant ON user_tenants(tenant_id);
+
 -- RLS helper: returns tenant_id for the authenticated user
 CREATE OR REPLACE FUNCTION get_tenant_id()
 RETURNS UUID
@@ -19,6 +21,8 @@ SET search_path = ''
 AS $$
   SELECT tenant_id FROM public.user_tenants WHERE user_id = auth.uid()
 $$;
+
+COMMENT ON FUNCTION get_tenant_id() IS 'Returns tenant_id for the authenticated user from user_tenants. Returns NULL if no mapping exists, denying RLS access.';
 
 -- Replace allow_all policies with tenant_isolation on all 11 tables
 
@@ -87,8 +91,7 @@ CREATE POLICY "tenant_isolation" ON balances
 ALTER TABLE user_tenants ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "user_own_mapping" ON user_tenants
   FOR SELECT USING (user_id = auth.uid());
-CREATE POLICY "service_insert" ON user_tenants
-  FOR INSERT WITH CHECK (true);
+
 
 -- Re-grant permissions
 GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
