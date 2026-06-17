@@ -1,15 +1,17 @@
 # Changelog
 
-## v0.2.0 — Login com Google (2026-06-16)
-- **Auth**: Google OAuth via Supabase Auth
-- **Middleware**: session refresh + redirect `/login` se nao autenticado
-- **`/login`**: botao "Entrar com Google", titulo "Gestao — Estoque de Pontos e Milhas"
+## v0.2.0 — Login com Google + Email (2026-06-17)
+- **Auth**: Google OAuth + email/senha via Supabase Auth
+- **Login page**: botao Google + formulario email/senha + toggle criar conta/entrar
+- **Middleware**: `src/middleware.ts` — session refresh + redirect `/login` se nao autenticado
 - **RLS**: politica `tenant_isolation` substitui `allow_all` — filtra por tenant do usuario
-- **Migration 011**: `user_tenants` + `get_tenant_id()` + novas politicas em 11 tabelas
-- **Sidebar**: avatar, nome do usuario, botao Sair
+- **Migration 011**: `user_tenants` + `get_tenant_id()` + politicas em 11 tabelas
+- **Migration 012**: trigger `on_auth_user_created` — associa novos usuarios automaticamente ao tenant padrao
+- **Sidebar**: avatar, nome do usuario, botao Sair; escondido no `/login` via `SidebarWrapper`
 - **AuthProvider**: React Context com user, session, signOut
+- **Auth callback**: `/auth/callback` — troca code por sessao + upsert user_tenants (fallback)
 - **Admin client**: mantido para FK guards (bypass RLS)
-- **Primeiro login**: associa ao tenant `0000...0001` (dados preservados)
+- **Dados existentes**: preservados, associados ao tenant `0000...0001`
 
 ## v0.1.0 — Geist + Glassmorphism (2026-06-17)
 - **Fonte**: Geist (Vercel) substitui Inter

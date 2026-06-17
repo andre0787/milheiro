@@ -63,8 +63,10 @@ cd /home/andreluiz0787/repos/milheiro && npx supabase db reset && \
 apps/web/src/
 ├── app/                    # Next.js App Router pages
 │   ├── page.tsx            # Dashboard (server component, force-dynamic)
-│   ├── layout.tsx          # Root layout with Sidebar + ThemeProvider
+│   ├── layout.tsx          # Root layout with SidebarWrapper + AuthProvider + ThemeProvider
 │   ├── globals.css         # VS Code gray palette (--color-*) in :root/.dark
+│   ├── auth/callback/      # OAuth callback — exchange code + create user_tenants
+│   ├── login/              # Login page — Google OAuth + email/password
 │   ├── api/                # Route handlers
 │   │   ├── programs/, holders/, cpfs/, operation-types/
 │   │   ├── entries/, transfers/, sales/, tickets/
@@ -75,24 +77,29 @@ apps/web/src/
 │   ├── transfers/          # /transfers, /transfers/new, /transfers/[id]
 │   ├── programs/           # CRUD
 │   ├── holders/            # CRUD
-│   ├── cpfs/               # CRUD
+│   ├── clientes/           # CRUD
 │   └── operation-types/    # CRUD
+├── middleware.ts            # Auth guard — refresh session + redirect /login
 ├── components/
 │   ├── ui/                 # shadcn/ui (button, card, dialog, input, label, select, table)
 │   ├── forms/              # sale-form, entry-form, transfer-form, ticket-form, inline-create-dialog, op-type-form
 │   ├── tables/             # sales-table, tickets-table, entries-table, transfers-table, holders-table, cpfs-table, op-types-table
 │   ├── dashboard/pnl-table.tsx
 │   ├── data-table/data-table.tsx  # Generic TanStack Table wrapper
-│   ├── sidebar.tsx, theme-toggle.tsx, theme-provider.tsx
+│   ├── sidebar.tsx, sidebar-wrapper.tsx, theme-toggle.tsx, theme-provider.tsx
+│   ├── auth-provider.tsx   # React Context — user, session, signOut
 │   ├── delete-button.tsx, clear-all-button.tsx, received-toggle.tsx
 │   └── forms/inline-create-dialog.tsx
 ├── types/index.ts          # All types (Sale, Ticket, Entry, Transfer, Program, Holder, Cpf, etc.)
 └── lib/
-    ├── supabase/server.ts  # createClient() — read cookies via await cookies()
+    ├── supabase/
+    │   ├── server.ts       # createClient(), createAdminClient()
+    │   ├── middleware.ts   # updateSession() — session refresh + auth guard
+    │   └── client.ts       # createBrowserClient()
     └── utils.ts            # cn(), formatCurrency(), formatDate(), formatNumber()
 ```
 
-## Database Schema (9 migrations)
+## Database Schema (12 migrations)
 
 ```
 tenants            (id UUID PK, name, slug)
@@ -106,6 +113,9 @@ sales              (id, tenant_id, program_id FK, holder_id FK, buyer_id FK→cp
 tickets            (id, tenant_id, program_id FK, holder_id FK, sale_id FK, issued_at, outbound_date, return_date, ticket_info)
 ticket_cpfs        (ticket_id FK, cpf_id FK) — N:N junction
 balances           (id, tenant_id, program_id FK, holder_id FK, total_points, total_cost, cpm GENERATED)
+user_tenants       (user_id UUID PK→auth.users, tenant_id UUID FK, created_at) — user→tenant mapping
+get_tenant_id()    # SECURITY DEFINER function — returns tenant_id for auth.uid()
+on_auth_user_created  # Trigger — auto-inserts user_tenants on new auth.users
 ```
 
 ### Triggers
@@ -210,3 +220,5 @@ FOR EACH ROW WHEN (
 7. **Supabase `.or()`** — chaining `.eq()` then `.or()` doesn't combine as expected; use `.or('col.eq.val,col.is.null')` directly
 8. **Server components** — add `export const dynamic = 'force-dynamic'` to pages that must always re-fetch
 9. **RSC payload** — Next.js sends binary RSC on client navigation, not full HTML; `curl` needs `-H "Accept: text/html"` for testing
+10. **Google OAuth redirect_uri** — Google redirects to `https://tcrxfeczxlohsdhkhgyq.supabase.co/auth/v1/callback` (Supabase), NOT the Vercel URL. This URI must be in Google Cloud Console's Authorized redirect URIs.
+11. **Middleware location** — must be at `src/middleware.ts` (project uses `src/` directory), not root-level `middleware.ts`.

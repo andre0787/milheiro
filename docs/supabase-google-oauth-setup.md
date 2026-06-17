@@ -7,17 +7,26 @@
 3. "Create Credentials" → "OAuth 2.0 Client ID"
 4. Application type: "Web application"
 5. Name: "Milheiro"
-6. Authorized redirect URIs:
-   - `https://web-alpha-ashy-0yn7kj4k5v.vercel.app/auth/callback`
+6. **Authorized redirect URIs** (IMPORTANTE: o Google redireciona para o Supabase, nao para o Vercel):
+   - `https://tcrxfeczxlohsdhkhgyq.supabase.co/auth/v1/callback`
 7. Create and copy Client ID and Client Secret
 
-## 2. Supabase Cloud Dashboard
+## 2. Supabase Cloud Dashboard — Auth Providers
 
 1. Go to https://supabase.com/dashboard/project/tcrxfeczxlohsdhkhgyq
 2. Authentication → Providers → Google
 3. Enable Google provider
 4. Paste Client ID and Client Secret from Google Cloud Console
 5. Save
+
+## 3. Supabase Cloud Dashboard — URL Configuration
+
+1. Authentication → URL Configuration
+2. **Site URL**: `https://web-alpha-ashy-0yn7kj4k5v.vercel.app`
+3. **Redirect URLs**: adicione (um por linha):
+   - `https://web-alpha-ashy-0yn7kj4k5v.vercel.app/auth/callback`
+   - `https://web-*.vercel.app/auth/callback`
+4. Save
 
 ## 3. Local Development
 
