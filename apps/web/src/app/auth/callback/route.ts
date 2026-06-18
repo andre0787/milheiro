@@ -8,8 +8,15 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/'
 
+  const forwardedHost = request.headers.get('x-forwarded-host')
+  const resolvedOrigin = forwardedHost
+    ? `${request.headers.get('x-forwarded-proto') ?? 'https'}://${forwardedHost}`
+    : origin
+
   if (code) {
     const cookieStore = await cookies()
+    let capturedCookies: { name: string; value: string; options: Record<string, unknown> }[] = []
+
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -19,9 +26,7 @@ export async function GET(request: Request) {
             return cookieStore.getAll()
           },
           setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
+            capturedCookies = cookiesToSet
           },
         },
       }
@@ -41,16 +46,17 @@ export async function GET(request: Request) {
           })
 
         if (upsertError) {
-          return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent('Failed to initialize your account. Please try again.')}`)
+          return NextResponse.redirect(`${resolvedOrigin}/login?error=${encodeURIComponent('Failed to initialize your account. Please try again.')}`)
         }
       }
     }
-  }
 
-  const forwardedHost = request.headers.get('x-forwarded-host')
-  const resolvedOrigin = forwardedHost
-    ? `${request.headers.get('x-forwarded-proto') ?? 'https'}://${forwardedHost}`
-    : origin
+    const response = NextResponse.redirect(`${resolvedOrigin}${next}`)
+    for (const c of capturedCookies) {
+      response.cookies.set(c.name, c.value, c.options as Record<string, string | number | boolean>)
+    }
+    return response
+  }
 
   return NextResponse.redirect(`${resolvedOrigin}${next}`)
 }
