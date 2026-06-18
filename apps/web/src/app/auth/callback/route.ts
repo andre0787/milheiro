@@ -13,10 +13,10 @@ export async function GET(request: Request) {
     ? `${request.headers.get('x-forwarded-proto') ?? 'https'}://${forwardedHost}`
     : origin
 
+  const response = NextResponse.redirect(`${resolvedOrigin}${next}`)
+
   if (code) {
     const cookieStore = await cookies()
-    let capturedCookies: { name: string; value: string; options: Record<string, unknown> }[] = []
-
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -26,7 +26,9 @@ export async function GET(request: Request) {
             return cookieStore.getAll()
           },
           setAll(cookiesToSet) {
-            capturedCookies = cookiesToSet
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            )
           },
         },
       }
@@ -38,25 +40,15 @@ export async function GET(request: Request) {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const admin = createAdminClient()
-        const { error: upsertError } = await admin
+        await admin
           .from('user_tenants')
           .upsert({
             user_id: user.id,
             tenant_id: '00000000-0000-0000-0000-000000000001',
           })
-
-        if (upsertError) {
-          return NextResponse.redirect(`${resolvedOrigin}/login?error=${encodeURIComponent('Failed to initialize your account. Please try again.')}`)
-        }
       }
     }
-
-    const response = NextResponse.redirect(`${resolvedOrigin}${next}`)
-    for (const c of capturedCookies) {
-      response.cookies.set(c.name, c.value, c.options as Record<string, string | number | boolean>)
-    }
-    return response
   }
 
-  return NextResponse.redirect(`${resolvedOrigin}${next}`)
+  return response
 }
