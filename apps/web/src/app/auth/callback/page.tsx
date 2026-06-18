@@ -2,31 +2,31 @@
 
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function AuthCallbackPage() {
   const router = useRouter()
   const supabase = createClient()
-  const [done, setDone] = useState(false)
+  const done = useRef(false)
 
   useEffect(() => {
-    if (done) return
-    setDone(true)
+    if (done.current) return
+    done.current = true
 
     const code = new URL(window.location.href).searchParams.get('code')
 
     async function completeAuth() {
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code)
-        if (error) {
-          console.error('auth/callback: exchange failed', error.message)
-        }
+        if (error) console.error('auth/callback: exchange failed', error.message)
       }
-      router.push('/')
+
+      const { data: { session } } = await supabase.auth.getSession()
+      router.push(session ? '/' : '/login')
     }
 
     completeAuth()
-  }, [router, supabase, done])
+  }, [router, supabase])
 
   return (
     <div className="flex min-h-screen items-center justify-center">
