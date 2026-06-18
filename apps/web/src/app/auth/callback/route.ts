@@ -13,8 +13,6 @@ export async function GET(request: Request) {
     ? `${request.headers.get('x-forwarded-proto') ?? 'https'}://${forwardedHost}`
     : origin
 
-  const response = NextResponse.redirect(`${resolvedOrigin}${next}`)
-
   if (code) {
     const cookieStore = await cookies()
     const supabase = createServerClient(
@@ -27,7 +25,7 @@ export async function GET(request: Request) {
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options)
+              cookieStore.set(name, value, options)
             )
           },
         },
@@ -50,5 +48,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return response
+  return NextResponse.redirect(`${resolvedOrigin}${next}`)
 }
