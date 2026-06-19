@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { SaleForm } from '@/components/forms/sale-form'
 
 export default function NewSalePage() {
@@ -45,7 +46,7 @@ export default function NewSalePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Nova Venda</h1>
+      <PageHeader title="Nova Venda" />
       <SaleForm onSubmit={handleSubmit} />
     </div>
   )

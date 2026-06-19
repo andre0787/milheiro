@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { DashboardSummary } from '@/types'
 import { PnLTable } from '@/components/dashboard/pnl-table'
-import { Heading } from '@/components/heading'
+import { PageHeader } from '@/components/page-header'
+import { ArrowUpRight, ArrowDownRight, Clock, DollarSign } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,7 +19,6 @@ export default async function DashboardPage() {
   const totalCost = balances?.reduce((sum, b) => sum + Number(b.total_cost), 0) ?? 0
   const avgCpm = totalPoints > 0 ? (totalCost / totalPoints) * 1000 : 0
 
-  // CPM por programa e titular (estoque atual)
   interface HolderCpm {
     key: string
     name: string
@@ -56,7 +56,6 @@ export default async function DashboardPage() {
     h.milhasCpm = h.milhasTotal > 0 ? (h.milhasCost / h.milhasTotal) * 1000 : 0
   }
 
-  // Count CPFs consumed per program+holder (tickets)
   const { data: ticketCpfsData } = await supabase
     .from('ticket_cpfs')
     .select('cpf_id, ticket_id')
@@ -82,7 +81,6 @@ export default async function DashboardPage() {
 
   const holdersCpm = Array.from(holderCpmMap.values())
 
-  // Build monthly sales summary (PnL table)
   const { data: allSales } = await supabase.from('sales').select('date, program_id, holder_id, sale_value, points_sold, cpm_at_sale').eq('received', true)
   const { data: allPrograms } = await supabase.from('programs').select('id, name')
   const { data: allHolders } = await supabase.from('holders').select('id, name')
@@ -119,52 +117,62 @@ export default async function DashboardPage() {
 
   const totalProfit = summaryData.reduce((sum, r) => sum + r.pnl_liquido, 0)
 
-  // Sum unreceived sales
   const { data: unreceived } = await supabase
     .from('sales').select('sale_value').or('received.eq.false,received.is.null')
   const pendingTotal = unreceived?.reduce((sum, s) => sum + Number(s.sale_value), 0) ?? 0
 
+  const stats = [
+    {
+      title: 'Custo Total',
+      value: formatCurrency(totalCost),
+      description: 'investido em estoque',
+      icon: DollarSign,
+      color: 'text-primary',
+    },
+    {
+      title: 'Lucro Total',
+      value: formatCurrency(totalProfit),
+      description: 'lucro realizado (vendas recebidas)',
+      icon: totalProfit >= 0 ? ArrowUpRight : ArrowDownRight,
+      color: totalProfit >= 0 ? 'text-profit' : 'text-loss',
+    },
+    {
+      title: 'Aguardando Recebimento',
+      value: formatCurrency(pendingTotal),
+      description: 'vendas não recebidas',
+      icon: Clock,
+      color: 'text-amber-500',
+    },
+  ]
+
   return (
-    <div className="space-y-6">
-      <Heading>Dashboard</Heading>
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Custo Total</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalCost)}</div>
-            <p className="text-xs text-muted-foreground">investido em estoque</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Lucro Total</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className={`text-2xl font-bold ${totalProfit >= 0 ? 'text-profit' : 'text-loss'}`}>
-              {formatCurrency(totalProfit)}
-            </div>
-            <p className="text-xs text-muted-foreground">lucro realizado (vendas recebidas)</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Aguardando Recebimento</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">{formatCurrency(pendingTotal)}</div>
-            <p className="text-xs text-muted-foreground">vendas não recebidas</p>
-          </CardContent>
-        </Card>
+    <div className="space-y-8">
+      <PageHeader title="Dashboard" description="Resumo do seu estoque de pontos e milhas" />
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        {stats.map((stat) => {
+          const Icon = stat.icon
+          return (
+            <Card key={stat.title} size="sm">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
+                <Icon className={`h-4 w-4 ${stat.color}`} />
+              </CardHeader>
+              <CardContent>
+                <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
+                <p className="mt-1 text-xs text-muted-foreground">{stat.description}</p>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
 
       {holdersCpm.length > 0 && (
-        <div>
-          <h2 className="text-lg font-semibold mb-4">CPM por Titular e Programa (Estoque Atual)</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold text-foreground">CPM por Titular e Programa</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {holdersCpm.map((h) => (
-              <Card key={h.key}>
+              <Card key={h.key} size="sm">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">{h.name}</CardTitle>
                   <p className="text-xs text-muted-foreground">{h.program}</p>
@@ -173,14 +181,14 @@ export default async function DashboardPage() {
                   {h.ptsTotal > 0 && (
                     <div>
                       <p className="text-xs text-muted-foreground">Pontos ({formatNumber(h.ptsTotal)} pts)</p>
-                      <p className="text-xl font-bold">R$ {h.ptsCpm.toFixed(2)}</p>
+                      <p className="text-lg font-bold text-foreground">R$ {h.ptsCpm.toFixed(2)}</p>
                       <p className="text-xs text-muted-foreground">CPM aquisição</p>
                     </div>
                   )}
                   {h.milhasTotal > 0 && (
                     <div>
                       <p className="text-xs text-muted-foreground">Milhas ({formatNumber(h.milhasTotal)} pts)</p>
-                      <p className="text-xl font-bold">R$ {h.milhasCpm.toFixed(2)}</p>
+                      <p className="text-lg font-bold text-foreground">R$ {h.milhasCpm.toFixed(2)}</p>
                       <p className="text-xs text-muted-foreground">
                         CPM aquisição{h.cpfsUsed > 0 ? ` · ${h.cpfsUsed} CPF(s) consumido(s)` : ''}
                       </p>
@@ -193,7 +201,7 @@ export default async function DashboardPage() {
               </Card>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
       <Card>

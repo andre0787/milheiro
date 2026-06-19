@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { EntryForm } from '@/components/forms/entry-form'
 
 export default function EditEntryPage() {
@@ -40,7 +41,7 @@ export default function EditEntryPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Editar Entrada</h1>
+      <PageHeader title="Editar Entrada" />
       <EntryForm initialData={initialData} onSubmit={handleSubmit} />
     </div>
   )

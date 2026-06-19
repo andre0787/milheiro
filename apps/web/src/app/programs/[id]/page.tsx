@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { ProgramForm } from '@/components/forms/program-form'
 
 export default function EditProgramPage() {
@@ -40,7 +41,7 @@ export default function EditProgramPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Editar Programa</h1>
+      <PageHeader title="Editar Programa" />
       <ProgramForm initialData={initialData} onSubmit={handleSubmit} />
     </div>
   )

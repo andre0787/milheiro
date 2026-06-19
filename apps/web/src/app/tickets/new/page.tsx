@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { TicketForm } from '@/components/forms/ticket-form'
 
 export default function NewTicketPage() {
@@ -25,7 +26,7 @@ export default function NewTicketPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Novo Bilhete</h1>
+      <PageHeader title="Novo Bilhete" />
       <TicketForm onSubmit={handleSubmit} />
     </div>
   )

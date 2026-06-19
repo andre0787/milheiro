@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { TicketForm } from '@/components/forms/ticket-form'
 
 export default function EditTicketPage() {
@@ -40,7 +41,7 @@ export default function EditTicketPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Editar Bilhete</h1>
+      <PageHeader title="Editar Bilhete" />
       <TicketForm initialData={initialData} onSubmit={handleSubmit} />
     </div>
   )

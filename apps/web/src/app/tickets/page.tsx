@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { TicketsTable } from '@/components/tables/tickets-table'
 import { ClearAllButton } from '@/components/clear-all-button'
+import { PageHeader } from '@/components/page-header'
 import { Ticket } from '@/types'
 
 export default async function TicketsPage() {
@@ -22,13 +23,15 @@ export default async function TicketsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Bilhetes</h1>
-        <div className="flex gap-2">
-          <Button render={<Link href="/tickets/new" />}>Novo Bilhete</Button>
-          <ClearAllButton listApi="/api/tickets" deleteApiBase="/api/tickets" />
-        </div>
-      </div>
+      <PageHeader
+        title="Bilhetes"
+        actions={
+          <>
+            <Button render={<Link href="/tickets/new" />}>Novo Bilhete</Button>
+            <ClearAllButton listApi="/api/tickets" deleteApiBase="/api/tickets" />
+          </>
+        }
+      />
       <TicketsTable data={mapped} />
     </div>
   )

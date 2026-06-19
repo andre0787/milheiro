@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { OpTypeForm } from '@/components/forms/op-type-form'
 
 export default function EditOpTypePage() {
@@ -40,7 +41,7 @@ export default function EditOpTypePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Editar Tipo de Operação</h1>
+      <PageHeader title="Editar Tipo de Operação" />
       <OpTypeForm initialData={initialData} onSubmit={handleSubmit} />
     </div>
   )
