@@ -27,23 +27,19 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
+  // IMPORTANT: getClaims() must be called right after createServerClient
+  // It reads the JWT from cookies and verifies it locally (no network call)
+  // This refreshes the session tokens and prevents random logouts
+  const { data } = await supabase.auth.getClaims()
+  const claims = data?.claims
+
   const pathname = request.nextUrl.pathname
   const isPublicPath = pathname === '/login' || pathname.startsWith('/auth/callback')
 
-  try {
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user && !isPublicPath) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/login'
-      return NextResponse.redirect(url)
-    }
-  } catch {
-    if (!isPublicPath) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/login'
-      return NextResponse.redirect(url)
-    }
+  if (!claims && !isPublicPath) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
   }
 
   return supabaseResponse
