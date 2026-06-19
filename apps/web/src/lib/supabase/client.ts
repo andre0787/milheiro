@@ -8,6 +8,9 @@ export function createClient() {
       cookieOptions: {
         secure: process.env.NODE_ENV === 'production',
       },
+      auth: {
+        detectSessionInUrl: false,
+      },
     }
   )
 }
