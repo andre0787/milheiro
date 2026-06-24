@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { OpTypeForm } from '@/components/forms/op-type-form'
 
 export default function NewOpTypePage() {
@@ -25,7 +26,7 @@ export default function NewOpTypePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Novo Tipo de Operação</h1>
+      <PageHeader title="Novo Tipo de Operação" />
       <OpTypeForm onSubmit={handleSubmit} />
     </div>
   )

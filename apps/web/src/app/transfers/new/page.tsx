@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { TransferForm } from '@/components/forms/transfer-form'
 
 export default function NewTransferPage() {
@@ -25,7 +26,7 @@ export default function NewTransferPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Nova Transferência</h1>
+      <PageHeader title="Nova Transferência" />
       <TransferForm onSubmit={handleSubmit} />
     </div>
   )

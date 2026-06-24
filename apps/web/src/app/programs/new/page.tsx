@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { ProgramForm } from '@/components/forms/program-form'
 
 export default function NewProgramPage() {
@@ -25,7 +26,7 @@ export default function NewProgramPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Novo Programa</h1>
+      <PageHeader title="Novo Programa" />
       <ProgramForm onSubmit={handleSubmit} />
     </div>
   )

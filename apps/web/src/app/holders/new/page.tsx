@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { HolderForm } from '@/components/forms/holder-form'
 
 export default function NewHolderPage() {
@@ -25,7 +26,7 @@ export default function NewHolderPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Novo Titular</h1>
+      <PageHeader title="Novo Titular" />
       <HolderForm onSubmit={handleSubmit} />
     </div>
   )

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { EntryForm } from '@/components/forms/entry-form'
 
 export default function NewEntryPage() {
@@ -25,7 +26,7 @@ export default function NewEntryPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Nova Entrada</h1>
+      <PageHeader title="Nova Entrada" />
       <EntryForm onSubmit={handleSubmit} />
     </div>
   )

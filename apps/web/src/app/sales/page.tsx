@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { SalesTable } from '@/components/tables/sales-table'
 import { ClearAllButton } from '@/components/clear-all-button'
+import { PageHeader } from '@/components/page-header'
 import { Sale } from '@/types'
 
 export const dynamic = 'force-dynamic'
@@ -45,13 +46,15 @@ export default async function SalesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Vendas</h1>
-        <div className="flex gap-2">
-          <Button render={<Link href="/sales/new" />}>Nova Venda</Button>
-          <ClearAllButton listApi="/api/sales" deleteApiBase="/api/sales" />
-        </div>
-      </div>
+      <PageHeader
+        title="Vendas"
+        actions={
+          <>
+            <Button render={<Link href="/sales/new" />}>Nova Venda</Button>
+            <ClearAllButton listApi="/api/sales" deleteApiBase="/api/sales" />
+          </>
+        }
+      />
       <SalesTable data={mapped} />
     </div>
   )

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { HoldersTable } from '@/components/tables/holders-table'
 import { ClearAllButton } from '@/components/clear-all-button'
+import { PageHeader } from '@/components/page-header'
 
 export default async function HoldersPage() {
   const supabase = await createClient()
@@ -10,13 +11,15 @@ export default async function HoldersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Titulares</h1>
-        <div className="flex gap-2">
-          <Button render={<Link href="/holders/new" />}>Novo Titular</Button>
-          <ClearAllButton listApi="/api/holders" deleteApiBase="/api/holders" />
-        </div>
-      </div>
+      <PageHeader
+        title="Titulares"
+        actions={
+          <>
+            <Button render={<Link href="/holders/new" />}>Novo Titular</Button>
+            <ClearAllButton listApi="/api/holders" deleteApiBase="/api/holders" />
+          </>
+        }
+      />
       <HoldersTable data={holders ?? []} />
     </div>
   )

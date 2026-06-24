@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { TransfersTable } from '@/components/tables/transfers-table'
 import { ClearAllButton } from '@/components/clear-all-button'
+import { PageHeader } from '@/components/page-header'
 import { Transfer } from '@/types'
 
 export default async function TransfersPage() {
@@ -21,13 +22,15 @@ export default async function TransfersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Transferências</h1>
-        <div className="flex gap-2">
-          <Button render={<Link href="/transfers/new" />}>Nova Transferência</Button>
-          <ClearAllButton listApi="/api/transfers" deleteApiBase="/api/transfers" />
-        </div>
-      </div>
+      <PageHeader
+        title="Transferências"
+        actions={
+          <>
+            <Button render={<Link href="/transfers/new" />}>Nova Transferência</Button>
+            <ClearAllButton listApi="/api/transfers" deleteApiBase="/api/transfers" />
+          </>
+        }
+      />
       <TransfersTable data={mapped} />
     </div>
   )
